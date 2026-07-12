@@ -1,0 +1,40 @@
+# Binaries
+/bin/*
+!/bin/.gitkeep
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Output of the go coverage tool
+*.out
+*.test
+*.prof
+
+# Dependency directories (replace the module path as necessary)
+/vendor/
+
+# Environment files
+.env
+backend/.env
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+logs/
+*.log
+
+# IDE and Editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+*.sublime-*
+
+# OS generated files
+.DS_Store
+Thumbs.db

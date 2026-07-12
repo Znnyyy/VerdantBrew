@@ -3,12 +3,12 @@ package dto
 import "time"
 
 type CheckoutRequest struct {
-	OrderType       string `json:"order_type" validate:"required"` // dine_in | takeaway | delivery
-	TableID         *uint  `json:"table_id,omitempty"`
-	DeliveryAddress string `json:"delivery_address,omitempty"`
-	PaymentMethod   string `json:"payment_method" validate:"required"` // qris | cash
-	VoucherCode     string `json:"voucher_code,omitempty"`
-	PointsToRedeem  int    `json:"points_to_redeem,omitempty"`
+	OrderType      string `json:"order_type" validate:"required"` // dine_in | takeaway | delivery
+	TableID        *uint  `json:"table_id,omitempty"`
+	AddressID      *uint  `json:"delivery_address,omitempty"`
+	PaymentMethod  string `json:"payment_method" validate:"required"` // qris | cash
+	VoucherCode    string `json:"voucher_code,omitempty"`
+	PointsToRedeem int    `json:"points_to_redeem,omitempty"`
 }
 
 type OrderResponse struct {
@@ -22,5 +22,6 @@ type OrderResponse struct {
 	Total                 float64   `json:"total"`
 	EstimatedTimeMinutes  int       `json:"estimated_time_minutes"`
 	EstimatedPointsEarned int       `json:"estimated_points_earned"`
+	PaymentURL            string    `json:"payment_url,omitempty"`
 	CreatedAt             time.Time `json:"created_at"`
 }

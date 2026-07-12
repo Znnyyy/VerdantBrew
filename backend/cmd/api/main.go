@@ -20,6 +20,7 @@ func main() {
 	}
 
 	config.ConnectDatabase()
+	config.InitMidtrans()
 
 	config.DB.AutoMigrate(
 		&models.User{},
@@ -34,9 +35,11 @@ func main() {
 		&models.OrderVoucher{},
 		&models.OrderItemOption{},
 		&models.Payment{},
+		&models.PointTransaction{},
 		&models.Cart{},
 		&models.CartItem{},
 		&models.CartItemOption{},
+		&models.Address{},
 	)
 
 	// Wiring: repository -> service -> handler
@@ -64,6 +67,23 @@ func main() {
 	voucherRepo := repository.NewVoucherRepository(config.DB)
 	voucherService := service.NewVoucherService(voucherRepo)
 	voucherHandler := handler.NewVoucherHandler(voucherService)
+
+	// Wiring Address
+	addressRepo := repository.NewAddressRepository(config.DB)
+	addressService := service.NewAddressService(addressRepo)
+	addressHandler := handler.NewAddressHandler(addressService)
+
+	// Wiring Order
+	orderRepo := repository.NewOrderRepository(config.DB)
+	
+	// Wiring Payment
+	paymentRepo := repository.NewPaymentRepository(config.DB)
+	paymentService := service.NewPaymentService(paymentRepo, orderRepo)
+	paymentHandler := handler.NewPaymentHandler(paymentService)
+	
+	// Wiring Order
+	orderService := service.NewOrderService(orderRepo, cartRepo, tableRepo, userRepo, addressRepo, voucherService, paymentService)
+	orderHandler := handler.NewOrderHandler(orderService)
 
 	app := fiber.New()
 
@@ -94,6 +114,18 @@ func main() {
 	// table & voucher
 	app.Get("/api/tables/scan/:token", middleware.AuthRequired, tableHandler.ScanQR)
 	app.Post("/api/vouchers/validate", middleware.AuthRequired, voucherHandler.Validate)
+
+	// order
+	app.Post("/api/orders/checkout", middleware.AuthRequired, orderHandler.Checkout)
+
+	// address
+	app.Post("/api/addresses", middleware.AuthRequired, addressHandler.Create)
+	app.Get("/api/addresses", middleware.AuthRequired, addressHandler.GetAll)
+	app.Put("/api/addresses/:id/set-primary", middleware.AuthRequired, addressHandler.SetPrimary)
+	app.Delete("/api/addresses/:id", middleware.AuthRequired, addressHandler.Delete)
+
+	// Route webhook - PUBLIC, tanpa middleware.AuthRequired
+	app.Post("/api/payments/notification", paymentHandler.HandleNotification)
 
 	log.Fatal(app.Listen(":5000"))
 }

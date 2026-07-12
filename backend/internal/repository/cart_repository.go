@@ -71,21 +71,24 @@ func (r *CartRepository) DeleteItem(itemID uint) error {
 }
 
 func (r *CartRepository) ClearUserCart(userID uint) error {
+	return r.ClearUserCartTx(r.DB, userID)
+}
+
+func (r *CartRepository) ClearUserCartTx(tx *gorm.DB, userID uint) error {
 	var cart models.Cart
-	err := r.DB.Where("user_id = ?", userID).First(&cart).Error
+	err := tx.Where("user_id = ?", userID).First(&cart).Error
 	if err == gorm.ErrRecordNotFound {
-		return nil // belum ada cart, gak perlu dihapus apa-apa
+		return nil
 	} else if err != nil {
 		return err
 	}
 
-	// Hapus options dulu (child), baru items (parent) - urutan penting
 	var itemIDs []uint
-	r.DB.Model(&models.CartItem{}).Where("cart_id = ?", cart.ID).Pluck("id", &itemIDs)
+	tx.Model(&models.CartItem{}).Where("cart_id = ?", cart.ID).Pluck("id", &itemIDs)
 
 	if len(itemIDs) > 0 {
-		r.DB.Where("cart_item_id IN ?", itemIDs).Delete(&models.CartItemOption{})
-		r.DB.Where("cart_id = ?", cart.ID).Delete(&models.CartItem{})
+		tx.Where("cart_item_id IN ?", itemIDs).Delete(&models.CartItemOption{})
+		tx.Where("cart_id = ?", cart.ID).Delete(&models.CartItem{})
 	}
 
 	return nil
