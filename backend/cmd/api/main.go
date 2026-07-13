@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v3/middleware/cors"
 	"github.com/joho/godotenv"
 
 	"VerdantBrew/backend/internal/config"
@@ -87,14 +88,18 @@ func main() {
 
 	app := fiber.New()
 
+	// CORS middleware - izinkan request dari mobile & web
+	app.Use(cors.New(cors.Config{
+		AllowOrigins: []string{"*"},
+		AllowHeaders: []string{"Origin", "Content-Type", "Authorization"},
+		AllowMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+	}))
+
 	// Public routes
 	app.Post("/api/register", authHandler.Register)
 	app.Post("/api/login", authHandler.Login)
-	app.Get("/api/profile", middleware.AuthRequired, func(c fiber.Ctx) error {
-		return c.JSON(fiber.Map{"user_id": c.Locals("user_id")})
-	})
 
-	// Contoh protected route (nanti dipakai buat fitur order dkk)
+	// Protected route - get profile
 	app.Get("/api/profile", middleware.AuthRequired, func(c fiber.Ctx) error {
 		userID := c.Locals("user_id")
 		return c.JSON(fiber.Map{"user_id": userID})

@@ -1,8 +1,8 @@
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-// Ganti sesuai IP laptop kamu di jaringan WiFi yang sama (cek pakai `ipconfig`)
-const BASE_URL = "http://192.168.18.1:5000";
+// IP laptop di jaringan WiFi (cek pakai `ipconfig` jika berubah)
+const BASE_URL = "http://192.168.18.99:5000";
 
 const apiClient = axios.create({
   baseURL: BASE_URL,
