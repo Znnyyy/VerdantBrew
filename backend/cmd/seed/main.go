@@ -44,7 +44,7 @@ func main() {
 		Slug:        "double-roasted-signature-latte",
 		Description: "A rich, full-bodied espresso balanced with velvety steamed milk and a thin layer of silky foam.",
 		Price:       54000,
-		ImageURL:    "https://example.com/latte.jpg",
+		ImageURL:    "https://images.unsplash.com/photo-1570968915860-d3fa03db4f18?w=600&q=80",
 		IsAvailable: true,
 		OptionGroups: []models.ProductOptionGroup{
 			{
@@ -87,7 +87,7 @@ func main() {
 		Name:        "Velvet Hot Latte",
 		Slug:        "velvet-hot-latte",
 		Price:       28000,
-		ImageURL:    "https://example.com/velvet-latte.jpg",
+		ImageURL:    "https://images.unsplash.com/photo-1561049501-e1f96affe5af?w=600&q=80",
 		IsAvailable: true,
 	}
 	db.Create(&velvetLatte)
@@ -97,7 +97,7 @@ func main() {
 		Name:        "Iced Americano",
 		Slug:        "iced-americano",
 		Price:       24000,
-		ImageURL:    "https://example.com/iced-americano.jpg",
+		ImageURL:    "https://images.unsplash.com/photo-1517701604599-bb29b565090c?w=600&q=80",
 		IsAvailable: true,
 	}
 	db.Create(&icedAmericano)
@@ -107,7 +107,7 @@ func main() {
 		Name:        "Avocado Toast",
 		Slug:        "avocado-toast",
 		Price:       45000,
-		ImageURL:    "https://example.com/avocado-toast.jpg",
+		ImageURL:    "https://images.unsplash.com/photo-1525351484163-7529414344d8?w=600&q=80",
 		IsAvailable: true,
 	}
 	db.Create(&avocadoToast)
@@ -117,7 +117,7 @@ func main() {
 		Name:        "Verdant Burger",
 		Slug:        "verdant-burger",
 		Price:       58000,
-		ImageURL:    "https://example.com/verdant-burger.jpg",
+		ImageURL:    "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&q=80",
 		IsAvailable: true,
 	}
 	db.Create(&verdantBurger)

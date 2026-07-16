@@ -15,7 +15,6 @@ import { getCategories, getProducts } from "../api/product";
 import { Category, Product } from "../types/product";
 
 // Components
-import HomeHeader from "../components/home/HomeHeader";
 import SearchBar from "../components/home/SearchBar";
 import HeroBanner from "../components/home/HeroBanner";
 import CategoryTabs from "../components/home/CategoryTabs";
@@ -81,11 +80,8 @@ export default function HomeScreen() {
   );
 
   return (
-    <View className="flex-1 bg-gray-50">
+    <View className="flex-1 bg-white pt-7">
       <StatusBar barStyle="dark-content" backgroundColor="#f9fafb" />
-
-      {/* ── Header ── */}
-      <HomeHeader />
 
       <ScrollView
         showsVerticalScrollIndicator={false}
@@ -97,20 +93,16 @@ export default function HomeScreen() {
           />
         }
       >
-        {/* ── Search Bar ── */}
         <SearchBar value={search} onChangeText={setSearch} />
 
-        {/* ── Hero Banner ── */}
         <HeroBanner />
 
-        {/* ── Category Tabs ── */}
         <CategoryTabs 
           categories={categories}
           selectedId={selectedCategory}
           onSelect={handleCategoryPress}
         />
 
-        {/* ── Product Grid ── */}
         <View className="px-2.5 mt-3 pb-4">
           {loading ? (
             <View className="items-center justify-center py-16">
@@ -138,7 +130,6 @@ export default function HomeScreen() {
         </View>
       </ScrollView>
 
-      {/* ── Bottom Nav ── */}
       <BottomNav active="home" />
     </View>
   );
