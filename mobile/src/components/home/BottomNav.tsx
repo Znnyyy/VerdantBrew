@@ -4,9 +4,10 @@ import { Ionicons } from "@expo/vector-icons";
 
 interface BottomNavProps {
   active: "home" | "orders" | "profile";
+  onPress?: (tab: "home" | "orders" | "profile") => void;
 }
 
-export default function BottomNav({ active }: BottomNavProps) {
+export default function BottomNav({ active, onPress }: BottomNavProps) {
   const tabs = [
     { key: "home", label: "Home", icon: "home" as const },
     { key: "orders", label: "Orders", icon: "receipt-outline" as const },
@@ -21,6 +22,7 @@ export default function BottomNav({ active }: BottomNavProps) {
           <TouchableOpacity
             key={tab.key}
             className="flex-1 items-center gap-y-0.5"
+            onPress={() => onPress?.(tab.key)}
           >
             <Ionicons
               name={tab.icon}

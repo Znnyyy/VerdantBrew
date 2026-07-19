@@ -7,12 +7,16 @@ import {
   StatusBar,
   Alert,
   ActivityIndicator,
+  TouchableOpacity,
 } from "react-native";
+import FloatingCartButton from "../components/home/FloatingCartButton";
 import { Ionicons } from "@expo/vector-icons";
 import { useFonts } from "expo-font";
 import { useAuth } from "../context/AuthContext";
+import { useCart } from "../context/CartContext";
 import { getCategories, getProducts } from "../api/product";
 import { Category, Product } from "../types/product";
+import { router, Stack } from "expo-router";
 
 // Components
 import SearchBar from "../components/home/SearchBar";
@@ -23,6 +27,7 @@ import BottomNav from "../components/home/BottomNav";
 
 export default function HomeScreen() {
   const { user, signOut } = useAuth();
+  const { addToCart, cartCount } = useCart();
   const [search, setSearch] = useState("");
   const [categories, setCategories] = useState<Category[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
@@ -62,11 +67,21 @@ export default function HomeScreen() {
     fetchData(catId ?? undefined);
   };
 
+  /**
+   * Smart Add to Cart:
+   * - If product has option_groups → navigate to detail page to pick options
+   * - If product has no option_groups → add directly to cart (qty 1)
+   */
   const handleAddToCart = (product: Product) => {
-    Alert.alert(
-      "Ditambahkan",
-      `${product.name} berhasil ditambahkan ke keranjang.`,
-    );
+    const hasOptions = product.option_groups && product.option_groups.length > 0;
+
+    if (hasOptions) {
+      router.push(
+        `/product/${product.id}?name=${encodeURIComponent(product.name)}`
+      );
+    } else {
+      addToCart(product, 1);
+    }
   };
 
   const onRefresh = () => {
@@ -74,17 +89,57 @@ export default function HomeScreen() {
     fetchData(selectedCategory ?? undefined);
   };
 
+  const handleBottomNavPress = (tab: "home" | "orders" | "profile") => {
+    switch (tab) {
+      case "profile":
+        Alert.alert("Logout", "Yakin ingin keluar?", [
+          { text: "Batal", style: "cancel" },
+          {
+            text: "Keluar",
+            onPress: async () => {
+              await signOut();
+              router.replace("/login");
+            },
+          },
+        ]);
+        break;
+      case "orders":
+        // TODO: navigate to orders screen
+        break;
+      case "home":
+      default:
+        break;
+    }
+  };
+
   // Filter berdasarkan search
   const filteredProducts = products.filter((p) =>
-    p.name.toLowerCase().includes(search.toLowerCase()),
+    p.name.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
-    <View className="flex-1 bg-white pt-7">
+    <View style={{ flex: 1, backgroundColor: "#ffffff", paddingTop: 28 }}>
+      <Stack.Screen
+        options={{
+          title: "Verdant Brew",
+          headerLeft: () => (
+            <TouchableOpacity style={{ marginLeft: 16 }}>
+              <Ionicons name="menu-outline" size={28} color="#1a4d3e" />
+            </TouchableOpacity>
+          ),
+          headerRight: () => (
+            <TouchableOpacity style={{ marginRight: 16 }}>
+              <Ionicons name="notifications-outline" size={24} color="#1a4d3e" />
+            </TouchableOpacity>
+          ),
+        }}
+      />
       <StatusBar barStyle="dark-content" backgroundColor="#f9fafb" />
 
       <ScrollView
         showsVerticalScrollIndicator={false}
+        style={{ flex: 1 }}
+        contentContainerStyle={{ paddingBottom: cartCount > 0 ? 120 : 80 }}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -97,7 +152,7 @@ export default function HomeScreen() {
 
         <HeroBanner />
 
-        <CategoryTabs 
+        <CategoryTabs
           categories={categories}
           selectedId={selectedCategory}
           onSelect={handleCategoryPress}
@@ -130,7 +185,9 @@ export default function HomeScreen() {
         </View>
       </ScrollView>
 
-      <BottomNav active="home" />
+      <BottomNav {...({ active: "home", onPress: handleBottomNavPress } as any)} />
+
+      <FloatingCartButton />
     </View>
   );
 }

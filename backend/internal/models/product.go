@@ -10,5 +10,5 @@ type Product struct {
 	Price        float64              `gorm:"not null" json:"price"`
 	ImageURL     string               `gorm:"size:255" json:"image_url"`
 	IsAvailable  bool                 `gorm:"default:true" json:"is_available"`
-	OptionGroups []ProductOptionGroup `json:"option_groups,omitempty"`
+	OptionGroups []ProductOptionGroup `json:"option_groups"`
 }

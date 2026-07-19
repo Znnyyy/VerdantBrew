@@ -24,7 +24,7 @@ func (r *ProductRepository) FindAll(categoryID uint) ([]models.Product, error) {
 		query = query.Where("category_id = ?", categoryID)
 	}
 
-	err := query.Find(&products).Error
+	err := query.Preload("OptionGroups").Find(&products).Error
 	return products, err
 }
 
